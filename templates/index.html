@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Nutrition Checker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .result {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result.success {
+            display: block;
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .result.error {
+            display: block;
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            color: #c62828;
+        }
+        
+        .result.info {
+            display: block;
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .food-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .food-item {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .food-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .nutrition-info {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .nutrition-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .nutrition-info p {
+            margin: 8px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥗 Food Nutrition Checker</h1>
+        <p class="subtitle">Check nutritional information of your favorite foods</p>
+        
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchTab('search')">Search</button>
+            <button class="tab-btn" onclick="switchTab('list')">List All</button>
+            <button class="tab-btn" onclick="switchTab('add')">Add Food</button>
+        </div>
+        
+        <!-- Search Tab -->
+        <div id="search" class="tab-content active">
+            <div class="form-group">
+                <label for="searchFood">Food Name:</label>
+                <input type="text" id="searchFood" placeholder="e.g., apple, chicken, rice...">
+            </div>
+            <button onclick="searchFood()">Search</button>
+            <div id="searchResult" class="result"></div>
+        </div>
+        
+        <!-- List Tab -->
+        <div id="list" class="tab-content">
+            <button onclick="listFoods()">Load Foods</button>
+            <div id="listResult" class="result"></div>
+        </div>
+        
+        <!-- Add Food Tab -->
+        <div id="add" class="tab-content">
+            <div class="form-group">
+                <label for="foodName">Food Name:</label>
+                <input type="text" id="foodName" placeholder="e.g., Banana">
+            </div>
+            <div class="form-group">
+                <label for="calories">Calories (kcal):</label>
+                <input type="number" id="calories" placeholder="e.g., 89" min="0">
+            </div>
+            <div class="form-group">
+                <label for="protein">Protein (g):</label>
+                <input type="number" id="protein" placeholder="e.g., 1.1" step="0.1" min="0">
+            </div>
+            <div class="form-group">
+                <label for="carbs">Carbohydrates (g):</label>
+                <input type="number" id="carbs" placeholder="e.g., 23" step="0.1" min="0">
+            </div>
+            <div class="form-group">
+                <label for="fat">Fat (g):</label>
+                <input type="number" id="fat" placeholder="e.g., 0.3" step="0.1" min="0">
+            </div>
+            <button onclick="addFood()">Add Food</button>
+            <div id="addResult" class="result"></div>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function searchFood() {
+            const food = document.getElementById('searchFood').value.trim();
+            if (!food) {
+                showResult('searchResult', 'Please enter a food name', 'error');
+                return;
+            }
+            
+            fetch('/api/search', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({food: food})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    showResult('searchResult', data.error, 'error');
+                } else {
+                    const html = `
+                        <div class="nutrition-info">
+                            <h3>${food.charAt(0).toUpperCase() + food.slice(1)}</h3>
+                            <p><strong>Calories:</strong> ${data.calories} kcal</p>
+                            <p><strong>Protein:</strong> ${data.protein} g</p>
+                            <p><strong>Carbohydrates:</strong> ${data.carbs} g</p>
+                            <p><strong>Fat:</strong> ${data.fat} g</p>
+                        </div>
+                    `;
+                    showResult('searchResult', html, 'info');
+                }
+            })
+            .catch(err => showResult('searchResult', 'Error: ' + err.message, 'error'));
+        }
+        
+        function listFoods() {
+            fetch('/api/list')
+            .then(res => res.json())
+            .then(data => {
+                if (data.foods.length === 0) {
+                    showResult('listResult', 'No foods in database', 'info');
+                } else {
+                    const html = `
+                        <p><strong>Total: ${data.foods.length} foods</strong></p>
+                        <div class="food-list">
+                            ${data.foods.map(food => `<div class="food-item" onclick="setSearch('${food}')">${food.charAt(0).toUpperCase() + food.slice(1)}</div>`).join('')}
+                        </div>
+                    `;
+                    showResult('listResult', html, 'info');
+                }
+            })
+            .catch(err => showResult('listResult', 'Error: ' + err.message, 'error'));
+        }
+        
+        function addFood() {
+            const name = document.getElementById('foodName').value.trim();
+            const calories = document.getElementById('calories').value;
+            const protein = document.getElementById('protein').value;
+            const carbs = document.getElementById('carbs').value;
+            const fat = document.getElementById('fat').value;
+            
+            if (!name || !calories || !protein || !carbs || !fat) {
+                showResult('addResult', 'Please fill all fields', 'error');
+                return;
+            }
+            
+            fetch('/api/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name, calories, protein, carbs, fat})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    showResult('addResult', data.error, 'error');
+                } else {
+                    showResult('addResult', data.success, 'success');
+                    document.getElementById('foodName').value = '';
+                    document.getElementById('calories').value = '';
+                    document.getElementById('protein').value = '';
+                    document.getElementById('carbs').value = '';
+                    document.getElementById('fat').value = '';
+                }
+            })
+            .catch(err => showResult('addResult', 'Error: ' + err.message, 'error'));
+        }
+        
+        function setSearch(food) {
+            document.getElementById('searchFood').value = food;
+            switchTab('search');
+            searchFood();
+        }
+        
+        function showResult(elementId, message, type) {
+            const result = document.getElementById(elementId);
+            result.className = `result ${type}`;
+            result.innerHTML = message;
+        }
+        
+        // Allow Enter key to search
+        document.getElementById('searchFood').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchFood();
+        });
+    </script>
+</body>
+</html>
