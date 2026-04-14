@@ -1,4 +1,4 @@
-iimport data
+import data
 
 def display_menu():
     """
