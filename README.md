@@ -33,6 +33,7 @@ food_nutrition_checker/
 
 - Python 3.6 or higher
 - Tkinter (usually included with Python installations)
+- Flask (for web version)
 
 ## Installation
 
@@ -65,6 +66,21 @@ python gui.py
 - Buttons to list all foods or add new foods
 - Clear results button
 - User-friendly dialog boxes for adding foods
+
+### Web Version (Browser Interface)
+
+```bash
+pip install -r requirements.txt
+python app.py
+```
+
+Then open `http://127.0.0.1:5000/` in your browser.
+
+**Features:**
+- Browser-based food search
+- List all foods with clickable entries
+- Add new food items through a web form
+- Live feedback and validation
 
 ## Sample Usage
 
